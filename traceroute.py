@@ -7,6 +7,7 @@ from scapy.all import *
 import signal
 import math
 import scipy.stats as stats
+import copy
 
 
 
@@ -33,26 +34,91 @@ def suppress_stdout():
 		finally:
 			sys.stdout = old_stdout
 
-def esperanza(array, n):
+def promedioFila(matriz):
+	arrayPromFila = []
+	for i in range(0,len(matriz)):
+		promFila = 0
+		for j in range(0,len(matriz[i])):
+			promFila = promFila + matriz[i][j]
+		arrayPromFila.insert(i,promFila/len(matriz[i]))
+	return arrayPromFila
+
+def promedioFilaCon0(matriz):
+	arrayPromFila = []
+	for i in range(0,len(matriz)):
+		promFila = 0
+		contador = 0
+		for j in range(0,len(matriz[i])):
+			if matriz[i][j] != 0:
+				contador = contador +1
+			promFila = promFila + matriz[i][j]
+		arrayPromFila.insert(i,promFila/contador)
+	return arrayPromFila
+
+def promedioColumna(matriz):
+	arrayPromColumna = []
+	arrayContador = []
+	for i in range(0,len(matriz)):
+		for j in range(0,len(matriz[i])):
+			if not existeIndice(j,arrayPromColumna):
+				arrayPromColumna.insert(j,matriz[i][j])
+				arrayContador.insert(j,1)
+			else:
+				arrayPromColumna[j] = matriz[i][j] + arrayPromColumna[j]
+				arrayContador[j] = arrayContador[j]+1
+	for j in range(0,len(arrayPromColumna)):
+		arrayPromColumna[j] = arrayPromColumna[j]/arrayContador[j]
+	return arrayPromColumna
+
+def completarTimeOut(matriz, a):
+	for i in range(0, len(matriz)):
+		for j in range(0,len(matriz[i])):
+			if matriz[i][j] == 0:
+				matriz[i][j] = a[i]
+
+def enlace(matriz):
+	res = []
+	for i in range(0, len(matriz)):
+		res.insert(i, [])
+		for j in range(0,len(matriz[i])):
+			if j==0:
+				res[i].insert(j, matriz[i][j])
+			else:
+				res[i].insert(j, matriz[i][j] - matriz[i][j-1])
+	return res
+
+
+def promedio(array, n):
 	EX = []
 	for i in range(0,len(array)):
 		EX.append(array[i]/n)
 	return EX
 
-def varianza(EX2, EX):
-	VX = []
-	E2X = []
-	for i in range(0,len(EX)):
-		E2X.append(EX[i]**2)
-	for i in range(0,len(EX)):
-		VX.append(EX2[i] - E2X[i])
-	return VX
+def existeIndice(k, array):
+	return k < len(array)
 
-def desvioEstandar(VX):
-	DS = []
-	for i in range(0,len(VX)):
-		DS.append(math.sqrt(VX[i]))
-	return DS
+def varianza(matriz, array):
+	arrayColumna = []
+	arrayContador = []
+	for i in range(0,len(matriz)):
+		for j in range(0,len(matriz[i])):
+			if not existeIndice(j,arrayColumna):
+				arrayColumna.insert(j,(matriz[i][j]-array[j])**2)
+				arrayContador.insert(j,1)
+			else:
+				arrayColumna[j] = arrayColumna[j] + (matriz[i][j] - array[j])**2
+				arrayContador[j] = arrayContador[j]+1
+	for j in range(0,len(arrayPromColumna)):
+		arrayPromColumna[j] = arrayPromColumna[j]/(arrayContador[j]-1)
+
+	return arrayColumna
+
+def desvioEstandar(V):
+	for i in range(0,len(V)):
+		V[i]= math.sqrt(V[i])
+	return V
+
+# def Grubbs(EXEnlace, EX):
 
 
 
@@ -67,14 +133,12 @@ if __name__ == '__main__':
 	n = int(sys.argv[3])			# (3) Cantidad de corridas para trazar la ruta
 
 	array = []
-	array2 = []
-	arrayEnlace = []
+	matrizRTT = []
 
 	for i in range(0,n):
 
 		hayEchoReplay = False
 		ttl = 1
-		rttA = 0 		# rtt Anterior
 
 		print ' '
 		print 'Ruta Nro: %d' %(i+1)
@@ -93,20 +157,14 @@ if __name__ == '__main__':
 			except TimeoutException, msg:
 				TimeOut = True
 
-
+			print 'rtt: %s' %rtt
 			print ' '
 
 			if not TimeOut:
 
-				if len(array) < ttl:
-					array.insert(ttl-1,rtt)
-					array2.insert(ttl-1,rtt**2)
-					arrayEnlace.insert(ttl-1,rtt-rttA)
-				else:
-					array.insert(ttl-1,array[ttl-1] + rtt)
-					array2.insert(ttl-1,array[ttl-1] + rtt**2)
-					arrayEnlace.insert(ttl-1,array[ttl-1] + rtt-rttA)
-				
+			
+				array.insert(ttl-1,rtt)
+			
 				if res[0][0][1][1].type == 11:
 					print 'TTL: %d' %ttl, '    RTT: %s' %rtt, '    IP Source: %s' %res[0][ICMP][0][1][0].src
 				if res[0][0][1][1].type == 0:
@@ -115,26 +173,38 @@ if __name__ == '__main__':
 
 			if TimeOut:
 
-				if len(array) < ttl:
-					array.insert(ttl-1,0)
-					array2.insert(ttl-1,0)
-					arrayEnlace.insert(ttl-1,0-rttA)
-				else:
-					array.insert(ttl-1,array[ttl-1] + 0)
-					array2.insert(ttl-1,array[ttl-1] + 0)
-					arrayEnlace.insert(ttl-1,array[ttl-1] + 0-rttA)
+				array.insert(ttl-1,0)
 
 				print 'TTL: %d' %ttl, '    Time Out!'
 
 			ttl = ttl + 1
-			rttA = rtt
 
-	EX = esperanza(array, n)						# Esperanza comun (ejercicio A)
-	EX2 = esperanza(array2, n)						# Esperanza con la muestra elevada al cuadrado (para calcular la varianza)
-	EXEnlace = esperanza(arrayEnlace, n)			# Esperanza pero con RTT de cada enlace, o sea "RTT_{i} - RTT_{i-1}" (ejercicio B)
-	VX = varianza(EX2,EX)						# Varianza comun (ejercicio B)
-	DS = desvioEstandar(VX)						# Desvio Estandar comun (ejercicio B)
-	print stats.normaltest(EXEnlace, axis=0)	# Test de Hipotesis (ejercicio C)
+		matrizRTT.insert(i,array)
+
+
+	arrayPromFila = promedioFilaCon0(matrizRTT)
+	completarTimeOut(matrizRTT,arrayPromFila)
+	arrayPromColumna = promedioColumna(matrizRTT)
+	arrayPromFila2 = promedioFila(matrizRTT)
+
+	matrizEnlace = enlace(matrizRTT)
+
+	arrayEnlacePromFila = promedioFila(matrizEnlace)
+	arrayEnlacePromColumna = promedioColumna(matrizEnlace)
+
+
+
+	# EX = promedio(array, n)						# Promedio comun (ejercicio A)
+	# EX2 = promedio(array2, n)						# Promedio con la muestra elevada al cuadrado (para calcular la varianza)
+	# EXEnlace = promedio(arrayEnlace, n)			# Promedio pero con RTT de cada enlace, o sea "RTT_{i} - RTT_{i-1}" (ejercicio B)
+	#V = varianza(matrizRTT,arrayPromColumna)						# Varianza comun (ejercicio B)
+	#V2 = varianza(matrizEnlace, arrayEnlacePromColumna)
+	#desvioEstandar(V)						# Desvio Estandar comun (ejercicio B)
+	#desvioEstandar(V2)
+	# print EXEnlace		
+	print stats.normaltest(arrayEnlacePromColumna, axis=0)	# Test de Hipotesis (ejercicio C)
+
+	#G = Grubbs(EXEnlace, EX)
 
 
 #for i in range(0,1):
