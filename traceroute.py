@@ -140,29 +140,30 @@ if __name__ == '__main__':
 		hayEchoReplay = False
 		ttl = 1
 
-		print ' '
 		print 'Ruta Nro: %d' %(i+1)
 		print ' '
 
 		while not(hayEchoReplay):
 
-			try:
-				with time_limit(timeLimit):
-					with suppress_stdout():
-						t0 = time.time()
-						res = sr(IP(dst=host, ttl=ttl) / ICMP())
-						t1 = time.time()
-					rtt = t1 - t0
-					TimeOut = False
-			except TimeoutException, msg:
-				TimeOut = True
+			#try:
+			#	with time_limit(timeLimit):
+			#		with suppress_stdout():
+			#			t0 = time.time()
+			#			res = sr(IP(dst=host, ttl=ttl) / ICMP())
+			#			t1 = time.time()
+			#		rtt = t1 - t0
+			#		TimeOut = False
+			#except TimeoutException, msg:
+			#	TimeOut = True
 
-			print 'rtt: %s' %rtt
-			print ' '
+			res = sr(IP(dst=host, ttl=ttl) / ICMP(), timeout = timeLimit, verbose = 0)
 
-			if not TimeOut:
+			#print 'rtt: %s' %rtt
+			#print ' '
 
-			
+			if res[0]:
+
+				rtt = res[0][0][1].time - res[0][0][0].sent_time
 				array.insert(ttl-1,rtt)
 			
 				if res[0][0][1][1].type == 11:
@@ -171,13 +172,15 @@ if __name__ == '__main__':
 					hayEchoReplay = True
 					print 'TTL: %d' %ttl, '    RTT: %s' %rtt, '    IP Source: %s' %res[0][ICMP][0][1][0].src
 
-			if TimeOut:
+			if res[1]:
 
 				array.insert(ttl-1,0)
 
 				print 'TTL: %d' %ttl, '    Time Out!'
 
 			ttl = ttl + 1
+
+		print ' '
 
 		matrizRTT.insert(i,array)
 
@@ -202,7 +205,12 @@ if __name__ == '__main__':
 	#desvioEstandar(V)						# Desvio Estandar comun (ejercicio B)
 	#desvioEstandar(V2)
 	# print EXEnlace		
-	print stats.normaltest(arrayEnlacePromColumna, axis=0)	# Test de Hipotesis (ejercicio C)
+	normalTest = stats.normaltest(arrayEnlacePromColumna, axis=0)	# Test de Hipotesis (ejercicio C)
+	if normalTest[1] > 0.055 :
+		print 'Hay distribucion Normal'
+
+	else:
+		print 'No hay distribucion Normal'
 
 	#G = Grubbs(EXEnlace, EX)
 
