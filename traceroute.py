@@ -40,6 +40,8 @@ def promedioFila(matriz):
 		promFila = 0
 		for j in range(0,len(matriz[i])):
 			promFila = promFila + matriz[i][j]
+			#print i, j
+			#print promFila
 		arrayPromFila.insert(i,promFila/len(matriz[i]))
 	return arrayPromFila
 
@@ -66,8 +68,10 @@ def promedioColumna(matriz):
 			else:
 				arrayPromColumna[j] = matriz[i][j] + arrayPromColumna[j]
 				arrayContador[j] = arrayContador[j]+1
+
 	for j in range(0,len(arrayPromColumna)):
 		arrayPromColumna[j] = arrayPromColumna[j]/arrayContador[j]
+
 	return arrayPromColumna
 
 def completarTimeOut(matriz, a):
@@ -110,7 +114,8 @@ def varianza(matriz, array):
 				arrayContador[j] = arrayContador[j]+1
 	
 	for j in range(0,len(arrayColumna)):
-		arrayColumna[j] = arrayColumna[j]/(arrayContador[j]-1)
+		if arrayContador[j] != 1:
+			arrayColumna[j] = arrayColumna[j]/(arrayContador[j]-1)
 
 	return arrayColumna
 
@@ -124,9 +129,12 @@ def Grubbs(matriz, Prom, S):
 	for i in range(0,len(matriz)):
 		for j in range(0,len(matriz[i])):
 			if not existeIndice(j,res):
-				res.insert(j,abs(matriz[i][j] - Prom[j])/S[j])
+				if S[j] != 0:
+					res.insert(j,abs(matriz[i][j] - Prom[j])/S[j])
+				else:
+					res.insert(j,0)
 			else:
-				if res[j] < (abs(matriz[i][j] - Prom[j])/S[j]):
+				if S[j] and res[j] < (abs(matriz[i][j] - Prom[j])/S[j]):
 					res[j] = abs(matriz[i][j] - Prom[j])/S[j]
 	return res
 
@@ -141,13 +149,13 @@ if __name__ == '__main__':
 	timeLimit = int(sys.argv[2])	# (2) Tiempo limite para cortar la funcion de envio de paquetes a un nodo
 	n = int(sys.argv[3])			# (3) Cantidad de corridas para trazar la ruta
 
-	array = []
 	matrizRTT = []
 
 	for i in range(0,n):
 
 		hayEchoReplay = False
 		ttl = 1
+		array = []
 
 		print 'Ruta Nro: %d' %(i+1)
 		print ' '
@@ -200,21 +208,15 @@ if __name__ == '__main__':
 	arrayPromFila2 = promedioFila(matrizRTT)
 
 	matrizEnlace = enlace(matrizRTT)
-
 	arrayEnlacePromFila = promedioFila(matrizEnlace)
 	arrayEnlacePromColumna = promedioColumna(matrizEnlace)
 
-
-
-	# EX = promedio(array, n)						# Promedio comun (ejercicio A)
-	# EX2 = promedio(array2, n)						# Promedio con la muestra elevada al cuadrado (para calcular la varianza)
-	# EXEnlace = promedio(arrayEnlace, n)			# Promedio pero con RTT de cada enlace, o sea "RTT_{i} - RTT_{i-1}" (ejercicio B)
 	V = varianza(matrizRTT,arrayPromColumna)						# Varianza comun (ejercicio B)
 	V2 = varianza(matrizEnlace, arrayEnlacePromColumna)
+
 	desvioEstandar(V)						# Desvio Estandar comun (ejercicio B)
 	desvioEstandar(V2)
-	#print Grubbs(matrizEnlace, arrayEnlacePromColumna, V2)
-	# print EXEnlace		
+
 	normalTest = stats.normaltest(arrayEnlacePromColumna, axis=0)	# Test de Hipotesis (ejercicio C)
 	if normalTest[1] > 0.055 :
 		print 'Hay distribucion Normal'
@@ -222,19 +224,6 @@ if __name__ == '__main__':
 	else:
 		print 'No hay distribucion Normal'
 
-	#G = Grubbs(EXEnlace, EX)
+	print 'Resultado Grubbs'
+	print Grubbs(matrizEnlace, arrayEnlacePromColumna, V2)
 
-
-#for i in range(0,1):
-#				with suppress_stdout():
-#					t0 = time.time()
-#					sr(IP(dst=host, ttl=ttl) / ICMP())
-#					t1 = time.time()
-#				rtt = rtt + t1-t0
-#				rtt2 = rtt2 + (t1-t0)**2
-#			EX = rtt/1					#Esperanza E(X) --- rttPromedio
-#			EX2 = rtt2/1				#E(X^2)
-#			E2X = EX**2					#(E(X))^2
-#			VX = E2X - EX2				#Varianza V(X)
-#			DS = math.sqrt(VX)			#Desvio Estandar
-#			array.append(EX-EXA)		#Guardo en un arreglo los tiempos (promedios) de cada enlace. Por es la resta de la esperanza nueva con respecto a la anterior 
