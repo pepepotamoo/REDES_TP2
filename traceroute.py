@@ -92,11 +92,11 @@ def enlace(matriz):
 	return res
 
 
-def promedio(array, n):
-	EX = []
+def promedio(array):
+	res = 0
 	for i in range(0,len(array)):
-		EX.append(array[i]/n)
-	return EX
+		res = res + array[i]
+	return res/len(array)
 
 def existeIndice(k, array):
 	return k < len(array)
@@ -119,23 +119,24 @@ def varianza(matriz, array):
 
 	return arrayColumna
 
+def varianza_array(array, Prom):
+	res = 0
+	for i in range(0, len(array)):
+		res = res + (array[i]-Prom)**2
+
+	return res/(len(array)-1)
+
+
 def desvioEstandar(V):
 	for i in range(0,len(V)):
 		V[i]= math.sqrt(V[i])
 	return V
 
-def Grubbs(matriz, Prom, S):
-	res = []
-	for i in range(0,len(matriz)):
-		for j in range(0,len(matriz[i])):
-			if not existeIndice(j,res):
-				if S[j] != 0:
-					res.insert(j,abs(matriz[i][j] - Prom[j])/S[j])
-				else:
-					res.insert(j,0)
-			else:
-				if S[j] and res[j] < (abs(matriz[i][j] - Prom[j])/S[j]):
-					res[j] = abs(matriz[i][j] - Prom[j])/S[j]
+def Grubbs(array, Prom, S):
+	res = 0
+	for i in range(0,len(array)):
+		if res < (array[i]-Prom)/S:
+			res = (array[i]-Prom)/S
 	return res
 
 
@@ -225,5 +226,8 @@ if __name__ == '__main__':
 		print 'No hay distribucion Normal'
 
 	print 'Resultado Grubbs'
-	print Grubbs(matrizEnlace, arrayEnlacePromColumna, V2)
+	prom_enlacePromCol = promedio(arrayEnlacePromColumna)
+	var_enlacePromCol = varianza_array(arrayEnlacePromColumna, prom_enlacePromCol)
+	ds_enlacePromCol = math.sqrt(var_enlacePromCol)
+	print Grubbs(arrayEnlacePromColumna, prom_enlacePromCol, ds_enlacePromCol)
 
