@@ -108,8 +108,9 @@ def varianza(matriz, array):
 			else:
 				arrayColumna[j] = arrayColumna[j] + (matriz[i][j] - array[j])**2
 				arrayContador[j] = arrayContador[j]+1
-	for j in range(0,len(arrayPromColumna)):
-		arrayPromColumna[j] = arrayPromColumna[j]/(arrayContador[j]-1)
+	
+	for j in range(0,len(arrayColumna)):
+		arrayColumna[j] = arrayColumna[j]/(arrayContador[j]-1)
 
 	return arrayColumna
 
@@ -118,13 +119,21 @@ def desvioEstandar(V):
 		V[i]= math.sqrt(V[i])
 	return V
 
-# def Grubbs(EXEnlace, EX):
+def Grubbs(matriz, Prom, S):
+	res = []
+	for i in range(0,len(matriz)):
+		for j in range(0,len(matriz[i])):
+			if not existeIndice(j,res):
+				res.insert(j,abs(matriz[i][j] - Prom[j])/S[j])
+			else:
+				if res[j] < (abs(matriz[i][j] - Prom[j])/S[j]):
+					res[j] = abs(matriz[i][j] - Prom[j])/S[j]
+	return res
 
 
 
 if __name__ == '__main__':
 
-	print len(sys.argv)
 	if len(sys.argv) != 4:			# El programa tiene 3 argumentos de entrada
 		raise AssertionError("\n\n # Se debe setear 3 argumentos de entrada.\n # Ejemplo: sudo python traceroute.py www.google.com 10 5\n # Si se quiere entender cada argumento, ver el codigo. En el mismo se indica detalladamente cada uno.\n")
 
@@ -200,10 +209,11 @@ if __name__ == '__main__':
 	# EX = promedio(array, n)						# Promedio comun (ejercicio A)
 	# EX2 = promedio(array2, n)						# Promedio con la muestra elevada al cuadrado (para calcular la varianza)
 	# EXEnlace = promedio(arrayEnlace, n)			# Promedio pero con RTT de cada enlace, o sea "RTT_{i} - RTT_{i-1}" (ejercicio B)
-	#V = varianza(matrizRTT,arrayPromColumna)						# Varianza comun (ejercicio B)
-	#V2 = varianza(matrizEnlace, arrayEnlacePromColumna)
-	#desvioEstandar(V)						# Desvio Estandar comun (ejercicio B)
-	#desvioEstandar(V2)
+	V = varianza(matrizRTT,arrayPromColumna)						# Varianza comun (ejercicio B)
+	V2 = varianza(matrizEnlace, arrayEnlacePromColumna)
+	desvioEstandar(V)						# Desvio Estandar comun (ejercicio B)
+	desvioEstandar(V2)
+	#print Grubbs(matrizEnlace, arrayEnlacePromColumna, V2)
 	# print EXEnlace		
 	normalTest = stats.normaltest(arrayEnlacePromColumna, axis=0)	# Test de Hipotesis (ejercicio C)
 	if normalTest[1] > 0.055 :
