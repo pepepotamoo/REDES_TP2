@@ -8,79 +8,79 @@ import signal
 import math
 import scipy.stats as stats
 import copy
+import numpy
+
+def traceroute(host, timeLimit, maxhop):
+	hayEchoReplay = False
+	ttl = 1
+	ruta_RTT = []
+	while (not hayEchoReplay) and (maxhop > ttl-1):
+		res = sr(IP(dst=host, ttl=ttl) / ICMP(), timeout = timeLimit, verbose = 0)
+		if res[0]:
+			rtt = res[0][0][1].time - res[0][0][0].sent_time
+			ruta_RTT.insert(ttl-1,rtt)
+			if res[0][0][1][1].type == 11:
+				if ttl < 10:
+					print 'TTL:  %d' %ttl, '    IP Source: %s' %res[0][0][1][0].src, '    RTT: %sms' %rtt
+				else:
+					print 'TTL: %d' %ttl, '    IP Source: %s' %res[0][0][1][0].src, '    RTT: %sms' %rtt
+			if res[0][0][1][1].type == 0:
+				hayEchoReplay = True
+				if ttl < 10:
+					print 'TTL:  %d' %ttl, '    IP Source: %s' %res[0][0][1][0].src, '    RTT: %sms' %rtt
+				else:
+					print 'TTL: %d' %ttl, '    IP Source: %s' %res[0][0][1][0].src, '    RTT: %sms' %rtt
+		if res[1]:
+			ruta_RTT.insert(ttl-1,0)
+			if ttl < 10:
+				print 'TTL:  %d' %ttl, '    Time Out!'
+			else:
+				print 'TTL: %d' %ttl, '    Time Out!'
+		ttl = ttl + 1
+	return ruta_RTT
 
 
-
-class TimeoutException(Exception): pass
-
-@contextmanager
-def time_limit(seconds):
-    def signal_handler(signum, frame):
-        raise TimeoutException, "Timed out!"
-    signal.signal(signal.SIGALRM, signal_handler)
-    signal.alarm(seconds)
-    try:
-        yield
-    finally:
-        signal.alarm(0)
-
-@contextmanager
-def suppress_stdout():
-	with open(os.devnull, "w") as devnull:
-		old_stdout = sys.stdout
-		sys.stdout = devnull
-		try:  
-			yield
-		finally:
-			sys.stdout = old_stdout
-
-def promedioFila(matriz):
-	arrayPromFila = []
+def prom_fila(matriz):
+	prom_fila = []
 	for i in range(0,len(matriz)):
-		promFila = 0
-		for j in range(0,len(matriz[i])):
-			promFila = promFila + matriz[i][j]
-			#print i, j
-			#print promFila
-		arrayPromFila.insert(i,promFila/len(matriz[i]))
-	return arrayPromFila
+		prom_fila_i = sum(matriz[i])/len(matriz[i])
+		prom_fila.insert(i,prom_fila_i)
+	return prom_fila
 
-def promedioFilaCon0(matriz):
-	arrayPromFila = []
+def prom_fila_con_0(matriz):
+	prom_fila = []
 	for i in range(0,len(matriz)):
-		promFila = 0
-		contador = 0
+		sum_fila = 0
+		count = 0
 		for j in range(0,len(matriz[i])):
 			if matriz[i][j] != 0:
-				contador = contador +1
-			promFila = promFila + matriz[i][j]
-		arrayPromFila.insert(i,promFila/contador)
-	return arrayPromFila
+				count = count +1
+			sum_fila = sum_fila + matriz[i][j]
+		prom_fila.insert(i,sum_fila/count)
+	return prom_fila
 
-def promedioColumna(matriz):
-	arrayPromColumna = []
-	arrayContador = []
+def prom_col(matriz):
+	prom_col = []
+	count = []
 	for i in range(0,len(matriz)):
 		for j in range(0,len(matriz[i])):
-			if not existeIndice(j,arrayPromColumna):
-				arrayPromColumna.insert(j,matriz[i][j])
-				arrayContador.insert(j,1)
+			if not existeIndice(j,prom_col):
+				prom_col.insert(j,matriz[i][j])
+				count.insert(j,1)
 			else:
-				arrayPromColumna[j] = matriz[i][j] + arrayPromColumna[j]
-				arrayContador[j] = arrayContador[j]+1
+				prom_col[j] = matriz[i][j] + prom_col[j]
+				count[j] = count[j]+1
+	for j in range(0,len(prom_col)):
+		prom_col[j] = prom_col[j]/count[j]
+	return prom_col
 
-	for j in range(0,len(arrayPromColumna)):
-		arrayPromColumna[j] = arrayPromColumna[j]/arrayContador[j]
-
-	return arrayPromColumna
-
-def completarTimeOut(matriz, a):
+def completar_timeout(matriz, a):
 	for i in range(0, len(matriz)):
 		for j in range(0,len(matriz[i])):
 			if matriz[i][j] == 0:
 				matriz[i][j] = a[i]
 
-def enlace(matriz):
+def calculator_delta(matriz):
 	res = []
 	for i in range(0, len(matriz)):
 		res.insert(i, [])
@@ -91,143 +91,128 @@ def enlace(matriz):
 				res[i].insert(j, matriz[i][j] - matriz[i][j-1])
 	return res
 
-
-def promedio(array):
-	res = 0
-	for i in range(0,len(array)):
-		res = res + array[i]
-	return res/len(array)
-
 def existeIndice(k, array):
 	return k < len(array)
 
-def varianza(matriz, array):
-	arrayColumna = []
-	arrayContador = []
+def varianza_matriz(matriz, array):
+	var = []
+	count = []
 	for i in range(0,len(matriz)):
 		for j in range(0,len(matriz[i])):
-			if not existeIndice(j,arrayColumna):
-				arrayColumna.insert(j,(matriz[i][j]-array[j])**2)
-				arrayContador.insert(j,1)
+			if not existeIndice(j,var):
+				var.insert(j,(matriz[i][j]-array[j])**2)
+				count.insert(j,1)
 			else:
-				arrayColumna[j] = arrayColumna[j] + (matriz[i][j] - array[j])**2
-				arrayContador[j] = arrayContador[j]+1
-	
-	for j in range(0,len(arrayColumna)):
-		if arrayContador[j] != 1:
-			arrayColumna[j] = arrayColumna[j]/(arrayContador[j]-1)
+				var[j] = var[j] + (matriz[i][j] - array[j])**2
+				count[j] = count[j]+1
+	for j in range(0,len(var)):
+		if count[j] != 1:
+			var[j] = var[j]/(count[j]-1)
+	return var
 
-	return arrayColumna
-
-def varianza_array(array, Prom):
+def varianza_array(array, prom):
 	res = 0
 	for i in range(0, len(array)):
-		res = res + (array[i]-Prom)**2
-
+		res = res + (array[i]-prom)**2
 	return res/(len(array)-1)
 
 
-def desvioEstandar(V):
+def desvio_estandar_array(V):
 	for i in range(0,len(V)):
 		V[i]= math.sqrt(V[i])
 	return V
 
-def Grubbs(array, Prom, S):
-	res = 0
-	for i in range(0,len(array)):
-		if res < (array[i]-Prom)/S:
-			res = (array[i]-Prom)/S
-	return res
+def grubbs_test_outliers(array, alpha):
+	G = 0
+	index = -1
+	N = len(array)
+	media = sum(array)/N
+	S = math.sqrt(varianza_array(array,media))
+	####### Calculator Grubbs #######
+	for i in range(0,N):
+		if G < (array[i]-media)/S:
+			G = (array[i]-media)/S 				#G = abs(array[i]-Prom)/S --> For the two-sided tests
+			index = i+1
+	########## T-Student ############
+	t = stats.t.isf(1 - alpha/(N), N-2)			#t = stats.t.isf(1 - alpha/(2*N), N-2) --> For the two-sided tests
+	Gtest = (N-1)/numpy.sqrt(N) * numpy.sqrt(t**2 / (N-2+t**2))
+	### Hipotesis de no outliers ####
+	no_outliers = G > Gtest
+	return G, Gtest, index, no_outliers
 
 
 
 if __name__ == '__main__':
 
-	if len(sys.argv) != 4:			# El programa tiene 3 argumentos de entrada
-		raise AssertionError("\n\n # Se debe setear 3 argumentos de entrada.\n # Ejemplo: sudo python traceroute.py www.google.com 10 5\n # Si se quiere entender cada argumento, ver el codigo. En el mismo se indica detalladamente cada uno.\n")
+	if len(sys.argv) != 6:			# El programa tiene 4 argumentos de entrada
+		raise AssertionError("\n\n # Se debe setear 4 argumentos de entrada.\n # Ejemplo: sudo python traceroute.py www.google.com 10 5 30 0.90\n # Si se quiere entender cada argumento, ver el codigo. En el mismo se indica detalladamente cada uno.\n")
 
 	host = sys.argv[1]				# (1) Host para localizar la ruta (puede ser IP o una direccion web)
 	timeLimit = int(sys.argv[2])	# (2) Tiempo limite para cortar la funcion de envio de paquetes a un nodo
 	n = int(sys.argv[3])			# (3) Cantidad de corridas para trazar la ruta
+	maxhop = int(sys.argv[4])		# (4) Cantidad de TTL maximo, en caso que no llegue a encontrar un echo-replay
+	alpha = float(sys.argv[5])		# (5) Alpha para el test de hipotesis de Grubbs, sobre el t-student
 
-	matrizRTT = []
 
+	######################################
+	# Traceroute, RTT Prom (ejercicio A) #
+	######################################
+
+	matriz_RTT = []
+
+	j = 0
 	for i in range(0,n):
+		os.system('cls' if os.name == 'nt' else 'clear')
+		print 'Ruta Nro: %d \n' %(i+1)
+		ruta  = traceroute(host, timeLimit, maxhop)
+		### Chqueo que no me den todos "time out". Si sucede, no tomo en cuenta dicha ruta
+		if sum(ruta) != 0:
+			matriz_RTT.insert(j, ruta)
+			j = j+1
+		
+	prom_ruta = prom_fila_con_0(matriz_RTT)
+	completar_timeout(matriz_RTT,prom_ruta)
+	prom_RTT = prom_col(matriz_RTT)
 
-		hayEchoReplay = False
-		ttl = 1
-		array = []
+	
+	##############################
+	# Estadisticas (ejercicio B) #
+	##############################
 
-		print 'Ruta Nro: %d' %(i+1)
-		print ' '
+	matriz_delta_RTT = calculator_delta(matriz_RTT)
+	prom_delta_ruta = prom_fila(matriz_delta_RTT)
+	prom_delta_RTT = prom_col(matriz_delta_RTT)
 
-		while not(hayEchoReplay):
+	ds_RTT = varianza_matriz(matriz_RTT,prom_RTT)
+	ds_delta_RTT = varianza_matriz(matriz_delta_RTT, prom_delta_RTT)
 
-			#try:
-			#	with time_limit(timeLimit):
-			#		with suppress_stdout():
-			#			t0 = time.time()
-			#			res = sr(IP(dst=host, ttl=ttl) / ICMP())
-			#			t1 = time.time()
-			#		rtt = t1 - t0
-			#		TimeOut = False
-			#except TimeoutException, msg:
-			#	TimeOut = True
-
-			res = sr(IP(dst=host, ttl=ttl) / ICMP(), timeout = timeLimit, verbose = 0)
-
-			#print 'rtt: %s' %rtt
-			#print ' '
-
-			if res[0]:
-
-				rtt = res[0][0][1].time - res[0][0][0].sent_time
-				array.insert(ttl-1,rtt)
-			
-				if res[0][0][1][1].type == 11:
-					print 'TTL: %d' %ttl, '    RTT: %s' %rtt, '    IP Source: %s' %res[0][ICMP][0][1][0].src
-				if res[0][0][1][1].type == 0:
-					hayEchoReplay = True
-					print 'TTL: %d' %ttl, '    RTT: %s' %rtt, '    IP Source: %s' %res[0][ICMP][0][1][0].src
-
-			if res[1]:
-
-				array.insert(ttl-1,0)
-
-				print 'TTL: %d' %ttl, '    Time Out!'
-
-			ttl = ttl + 1
-
-		print ' '
-
-		matrizRTT.insert(i,array)
+	desvio_estandar_array(ds_RTT)
+	desvio_estandar_array(ds_delta_RTT)
 
 
-	arrayPromFila = promedioFilaCon0(matrizRTT)
-	completarTimeOut(matrizRTT,arrayPromFila)
-	arrayPromColumna = promedioColumna(matrizRTT)
-	arrayPromFila2 = promedioFila(matrizRTT)
+	##########################################
+	# Test de Hipotesis Normal (ejercicio C) #
+	##########################################
 
-	matrizEnlace = enlace(matrizRTT)
-	arrayEnlacePromFila = promedioFila(matrizEnlace)
-	arrayEnlacePromColumna = promedioColumna(matrizEnlace)
-
-	V = varianza(matrizRTT,arrayPromColumna)						# Varianza comun (ejercicio B)
-	V2 = varianza(matrizEnlace, arrayEnlacePromColumna)
-
-	desvioEstandar(V)						# Desvio Estandar comun (ejercicio B)
-	desvioEstandar(V2)
-
-	normalTest = stats.normaltest(arrayEnlacePromColumna, axis=0)	# Test de Hipotesis (ejercicio C)
+	os.system('cls' if os.name == 'nt' else 'clear')
+	
+	normalTest = stats.normaltest(prom_delta_RTT, axis=0)	
 	if normalTest[1] > 0.055 :
-		print 'Hay distribucion Normal'
+		print 'Hay distribucion Normal\n'
 
 	else:
-		print 'No hay distribucion Normal'
+		print 'No hay distribucion Normal\n'
 
-	print 'Resultado Grubbs'
-	prom_enlacePromCol = promedio(arrayEnlacePromColumna)
-	var_enlacePromCol = varianza_array(arrayEnlacePromColumna, prom_enlacePromCol)
-	ds_enlacePromCol = math.sqrt(var_enlacePromCol)
-	print Grubbs(arrayEnlacePromColumna, prom_enlacePromCol, ds_enlacePromCol)
+
+	##########################################
+	# Test de Hipotesis Grubbs (ejercicio D) #
+	##########################################
+
+	G, Gtest, index, no_outliers = grubbs_test_outliers(prom_delta_RTT, alpha)    
+
+	if not no_outliers:
+		print 'Hay outlier'
+		print 'Enlace submarino: %d\n' %index
+	else:
+		print 'No hay outlier\n'
 
