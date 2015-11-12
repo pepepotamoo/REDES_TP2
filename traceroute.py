@@ -144,8 +144,8 @@ def grubbs_test_outliers(array, alpha):
 
 if __name__ == '__main__':
 
-	if len(sys.argv) != 6:			# El programa tiene 4 argumentos de entrada
-		raise AssertionError("\n\n # Se debe setear 4 argumentos de entrada.\n # Ejemplo: sudo python traceroute.py www.google.com 10 5 30 0.90\n # Si se quiere entender cada argumento, ver el codigo. En el mismo se indica detalladamente cada uno.\n")
+	if len(sys.argv) != 6:			# El programa tiene 5 argumentos de entrada
+		raise AssertionError("\n\n # Se debe setear 5 argumentos de entrada.\n # Ejemplo: sudo python traceroute.py www.google.com 10 5 30 0.90\n # Si se quiere entender cada argumento, ver el codigo. En el mismo se indica detalladamente cada uno.\n")
 
 	host = sys.argv[1]				# (1) Host para localizar la ruta (puede ser IP o una direccion web)
 	timeLimit = int(sys.argv[2])	# (2) Tiempo limite para cortar la funcion de envio de paquetes a un nodo
