@@ -124,21 +124,25 @@ def desvio_estandar_array(V):
 
 def grubbs_test_outliers(array, alpha):
 	G = 0
+	enlaces_submarinos = []
+	saltos_submarinos = []
+	hay_outliers = False
 	index = -1
 	N = len(array)
 	media = sum(array)/N
 	S = math.sqrt(varianza_array(array,media))
+	########## T-Student ############
+	t = stats.t.isf((1 - alpha)/(N), N-2)			#t = stats.t.isf(1 - alpha/(2*N), N-2) --> For the two-sided tests
+	Gtest = (N-1)/numpy.sqrt(N) * numpy.sqrt(t**2 / (N-2+t**2))
 	####### Calculator Grubbs #######
 	for i in range(0,N):
-		if G < (array[i]-media)/S:
-			G = (array[i]-media)/S 				#G = abs(array[i]-Prom)/S --> For the two-sided tests
-			index = i+1
-	########## T-Student ############
-	t = stats.t.isf(1 - alpha/(N), N-2)			#t = stats.t.isf(1 - alpha/(2*N), N-2) --> For the two-sided tests
-	Gtest = (N-1)/numpy.sqrt(N) * numpy.sqrt(t**2 / (N-2+t**2))
+		if Gtest < abs(array[i]-media)/S:
+			saltos_submarinos.append(abs(array[i]-media)/S) 	#G = abs(array[i]-Prom)/S --> For the two-sided tests
+			enlaces_submarinos.append(i+1)
+			hay_outliers = True
 	### Hipotesis de no outliers ####
-	no_outliers = G > Gtest
-	return G, Gtest, index, no_outliers
+	#hay_outliers = G > Gtest
+	return saltos_submarinos, Gtest, enlaces_submarinos, hay_outliers
 
 
 
@@ -208,11 +212,12 @@ if __name__ == '__main__':
 	# Test de Hipotesis Grubbs (ejercicio D) #
 	##########################################
 
-	G, Gtest, index, no_outliers = grubbs_test_outliers(prom_delta_RTT, alpha)    
+	saltos_submarinos, Gtest, enlaces_submarinos, hay_outliers = grubbs_test_outliers(prom_delta_RTT, alpha)    
 
-	if not no_outliers:
+	if hay_outliers:
 		print 'Hay outlier'
-		print 'Enlace submarino: %d\n' %index
+		print 'Enlaces submarinos: ', enlaces_submarinos
+		print 'Valores de los saltos: ', saltos_submarinos
 	else:
 		print 'No hay outlier\n'
 
