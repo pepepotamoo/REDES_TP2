@@ -10,33 +10,66 @@ import scipy.stats as stats
 import copy
 import numpy
 
-def traceroute(host, timeLimit, maxhop):
+def escribir_trafico(ttl,src,rtt,f):
+	print 'TTL:  %d' %ttl, '    IP Source: %s' %src, '    RTT: %sms' %rtt
+	f.write('TTL:  %d' %ttl)
+	f.write('    IP Source: %s' %src) 
+	f.write('    RTT: %sms \n' %rtt)
+
+def escribir_trafico_10(ttl,src,rtt,f):
+	print 'TTL: %d' %ttl, '    IP Source: %s' %src, '    RTT: %sms' %rtt
+	f.write('TTL: %d' %ttl)
+	f.write('    IP Source: %s' %src) 
+	f.write('    RTT: %sms \n' %rtt)
+
+def escribir_time_out(ttl,f):
+	print 'TTL:  %d' %ttl, '    Time Out!'
+	f.write('TTL:  %d' %ttl) 
+	f.write('    Time Out! \n')
+
+def escribir_time_out_10(ttl,f):
+	print 'TTL: %d' %ttl, '    Time Out!'
+	f.write('TTL: %d' %ttl)
+	f.write('    Time Out! \n')
+
+def escribir_arreglo(array,f):
+	for i in range(0,len(array)):
+		f.write(str(array[i]))
+		if i!= (len(array)-1):
+			f.write(', ')
+	f.write('\n')
+
+
+def traceroute(host, timeLimit, maxhop, f):
 	hayEchoReplay = False
 	ttl = 1
 	ruta_RTT = []
+
 	while (not hayEchoReplay) and (maxhop > ttl-1):
+
 		res = sr(IP(dst=host, ttl=ttl) / ICMP(), timeout = timeLimit, verbose = 0)
 		if res[0]:
 			rtt = res[0][0][1].time - res[0][0][0].sent_time
 			ruta_RTT.insert(ttl-1,rtt)
-			if res[0][0][1][1].type == 11:
-				if ttl < 10:
-					print 'TTL:  %d' %ttl, '    IP Source: %s' %res[0][0][1][0].src, '    RTT: %sms' %rtt
-				else:
-					print 'TTL: %d' %ttl, '    IP Source: %s' %res[0][0][1][0].src, '    RTT: %sms' %rtt
+
 			if res[0][0][1][1].type == 0:
 				hayEchoReplay = True
-				if ttl < 10:
-					print 'TTL:  %d' %ttl, '    IP Source: %s' %res[0][0][1][0].src, '    RTT: %sms' %rtt
-				else:
-					print 'TTL: %d' %ttl, '    IP Source: %s' %res[0][0][1][0].src, '    RTT: %sms' %rtt
+
+			if ttl < 10:
+				escribir_trafico(ttl,res[0][0][1][0].src,rtt,f)
+			else:
+				escribir_trafico_10(ttl,res[0][0][1][0].src,rtt,f)
+
 		if res[1]:
 			ruta_RTT.insert(ttl-1,0)
+
 			if ttl < 10:
-				print 'TTL:  %d' %ttl, '    Time Out!'
+				escribir_time_out(ttl,f)
 			else:
-				print 'TTL: %d' %ttl, '    Time Out!'
+				escribir_time_out_10(ttl,f)
+				
 		ttl = ttl + 1
+
 	return ruta_RTT
 
 
@@ -157,6 +190,18 @@ if __name__ == '__main__':
 	maxhop = int(sys.argv[4])		# (4) Cantidad de TTL maximo, en caso que no llegue a encontrar un echo-replay
 	alpha = float(sys.argv[5])		# (5) Alpha para el test de hipotesis de Grubbs, sobre el t-student
 
+	#### Abrimos archivo para copiar captura ####
+	f = open ("captura.txt", "w")
+
+	#### Escribo los parametros de entrada
+	f.write("Parametros de entrada\n")
+	f.write("Host: %s \n" %str(host))
+	f.write("Tiempo Limite: %d \n" %timeLimit)
+	f.write("Cant. Rutas: %d \n" %n)
+	f.write("TTL Maximo: %d \n" %maxhop)
+	f.write("Alpha: %f \n" %alpha)
+	f.write('\n\n')
+
 
 	######################################
 	# Traceroute, RTT Prom (ejercicio A) #
@@ -168,12 +213,15 @@ if __name__ == '__main__':
 	for i in range(0,n):
 		os.system('cls' if os.name == 'nt' else 'clear')
 		print 'Ruta Nro: %d \n' %(i+1)
-		ruta  = traceroute(host, timeLimit, maxhop)
+		f.write('Ruta Nro: %d \n' %(i+1))
+		f.write('\n')
+		ruta  = traceroute(host, timeLimit, maxhop, f)
+		f.write('\n\n')
 		### Chqueo que no me den todos "time out". Si sucede, no tomo en cuenta dicha ruta
 		if sum(ruta) != 0:
 			matriz_RTT.insert(j, ruta)
 			j = j+1
-		
+	
 	prom_ruta = prom_fila_con_0(matriz_RTT)
 	completar_timeout(matriz_RTT,prom_ruta)
 	prom_RTT = prom_col(matriz_RTT)
@@ -186,12 +234,18 @@ if __name__ == '__main__':
 	matriz_delta_RTT = calculator_delta(matriz_RTT)
 	prom_delta_ruta = prom_fila(matriz_delta_RTT)
 	prom_delta_RTT = prom_col(matriz_delta_RTT)
+	f.write('Promedio Delta RTT: ') 
+	escribir_arreglo(prom_delta_RTT,f)
+	f.write('\n')
 
 	ds_RTT = varianza_matriz(matriz_RTT,prom_RTT)
 	ds_delta_RTT = varianza_matriz(matriz_delta_RTT, prom_delta_RTT)
 
 	desvio_estandar_array(ds_RTT)
 	desvio_estandar_array(ds_delta_RTT)
+	f.write('Desvio Estandar Delta RTT: ') 
+	escribir_arreglo(ds_delta_RTT,f)
+	f.write('\n')
 
 
 	##########################################
@@ -203,9 +257,13 @@ if __name__ == '__main__':
 	normalTest = stats.normaltest(prom_delta_RTT, axis=0)	
 	if normalTest[1] > 0.055 :
 		print 'Hay distribucion Normal\n'
+		f.write('Hay distribucion Normal\n')
+		f.write('\n')
 
 	else:
 		print 'No hay distribucion Normal\n'
+		f.write('No hay distribucion Normal\n')
+		f.write('\n')
 
 
 	##########################################
@@ -216,8 +274,22 @@ if __name__ == '__main__':
 
 	if hay_outliers:
 		print 'Hay outlier'
+		f.write('Hay outlier\n')
+		f.write('\n')
 		print 'Enlaces submarinos: ', enlaces_submarinos
+		f.write('Enlaces submarinos: ')
+		escribir_arreglo(enlaces_submarinos,f)
+		f.write('\n')
 		print 'Valores de los saltos: ', saltos_submarinos
+		f.write('Valores de los saltos: ')
+		escribir_arreglo(saltos_submarinos,f)
+		f.write('\n')
 	else:
 		print 'No hay outlier\n'
+		f.write('No hay outlier\n')
+		f.write('\n')
+
+
+	#### Cerramos archivo ####
+	f.close()
 
