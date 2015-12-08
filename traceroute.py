@@ -107,11 +107,17 @@ def prom_col(matriz):
 		prom_col[j] = prom_col[j]/count[j]
 	return prom_col
 
-def completar_timeout(matriz, a):
+def interpolar(matriz, a):
 	for i in range(0, len(matriz)):
 		for j in range(0,len(matriz[i])):
 			if matriz[i][j] == 0:
-				matriz[i][j] = a[i]
+				k = j+1
+				while matriz[i][k] == 0:
+					k = k+1
+				l = j	
+				while matriz[i][j] == 0: 
+					matriz[i][j] = (matriz[i][l-1]+matriz[i][k])/2
+					j = j+1
 
 def calculator_delta(matriz):
 	res = []
@@ -223,7 +229,7 @@ if __name__ == '__main__':
 			j = j+1
 	
 	prom_ruta = prom_fila_con_0(matriz_RTT)
-	completar_timeout(matriz_RTT,prom_ruta)
+	interpolar(matriz_RTT,prom_ruta)
 	prom_RTT = prom_col(matriz_RTT)
 	f.write('Promedio RTT: ') 
 	escribir_arreglo(prom_RTT,f)
