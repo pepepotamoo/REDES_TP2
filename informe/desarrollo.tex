@@ -1,1 +1,33 @@
 \section{Desarrollo}
+
+
+El programa requiere 5 parámetros de entrada:
+
+\begin{itemize}
+
+\item  Host destino: Host para localizar la ruta (puede ser IP o una direccion web)
+
+\item Tiempo límite: Tiempo límite para cortar la función de envío de paquetes a un nodo.
+
+\item Cantidad de corridas: Cantidad de corridas para obtener los promedios de RTT.
+
+\item TTL: Cantidad de TTL máximo, en caso que no llegue a encontrar un echo-replay.
+
+\item Alpha:  Nivel de significancia utilizado en el test de Grubbs
+
+\end{itemize}
+
+Ejemplo de corrida:
+\fbox{sudo phyton traceroute.py google.com 10 5 30 0.05}
+\\
+\\
+
+En cada corrida se almacena la IP y el RTT de los nodos intermedios mediante el incremento de TTL, empezando por el valor 1 hasta llegar al host destino o hasta alcanzar al TTL máximo indicado por el parámetro de entrada. 
+\\
+Al finalizar la totalidad de las corridas se calcula el RTT promedio de cada salto. Para el caso de que un nodo haya excedido el tiempo límite(time out), tomamos la decisión de rellenar su RTT con el valor promedio de RTT del salto en que se encuentra. A partir de los promedios de RTT calculamos el desvío estandar y los $\Delta$RTT de cada salto calculado como diferencia con el salto anterior.
+$\Delta RTT = RTT_{i} - RTT _{i-1}$
+\\
+Una vez calculados los $\Delta RTT$ de cada salto, se utiliza scipy.stats.normalTest , la funcionalidad de SciPy que permite obtener la probabilidad de que los $\Delta RTT$ sigan una distribución normal.
+
+
+
