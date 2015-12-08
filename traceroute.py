@@ -225,6 +225,9 @@ if __name__ == '__main__':
 	prom_ruta = prom_fila_con_0(matriz_RTT)
 	completar_timeout(matriz_RTT,prom_ruta)
 	prom_RTT = prom_col(matriz_RTT)
+	f.write('Promedio RTT: ') 
+	escribir_arreglo(prom_RTT,f)
+	f.write('\n')
 
 	
 	##############################
