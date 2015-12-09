@@ -9,9 +9,9 @@ El programa requiere 5 parámetros de entrada:
 
 \item Tiempo límite: Tiempo límite para cortar la función de envío de paquetes a un nodo.
 
-\item Cantidad de corridas: Cantidad de corridas para obtener los promedios de RTT.
+\item Cantidad de rutas: Cantidad de rutas para obtener los promedios de RTT.
 
-\item TTL: Cantidad de TTL máximo, en caso que no llegue a encontrar un echo-replay.
+\item TTL - Hop: Cantidad de TTL máximo o cantidad de saltos m\'aximo, en caso que no llegue a encontrar un echo-replay.
 
 \item Alpha:  Nivel de significancia utilizado en el test de Grubbs
 
@@ -22,12 +22,18 @@ Ejemplo de corrida:
 \\
 \\
 
-En cada corrida se almacena la IP y el RTT de los nodos intermedios mediante el incremento de TTL, empezando por el valor 1 hasta llegar al host destino o hasta alcanzar al TTL máximo indicado por el parámetro de entrada. 
+En cada corrida, para trazar una ruta, se almacena la IP y el RTT de los nodos intermedios mediante el incremento de TTL, empezando por el valor 1 hasta llegar al host destino o hasta alcanzar al TTL máximo indicado por el parámetro de entrada. Como nos indicaban que deb\'iamos hacer una especie de monitoreo, cada corrida se va mostrando por pantalla en la salida.\\
+Tambi\'en tenemos Cantida de rutas, y la forma de mostrarla por pantalla es la siguiente: Cuando finaliza una ruta, llega a su host destino o al TTL m\'aximo, se resetea la pantalla y arranca la ruta como lo hizo inicialmente la primera. Este comportamiento se repite hasta finalizar la \'ultima ruta.
 \\
-Al finalizar la totalidad de las corridas se calcula el RTT promedio de cada salto. Para el caso de que un nodo haya excedido el tiempo límite(time out), tomamos la decisión de rellenar su RTT con el valor promedio de RTT del salto en que se encuentra. A partir de los promedios de RTT calculamos el desvío estandar y los $\Delta$RTT de cada salto calculado como diferencia con el salto anterior.
+\\
+Al finalizar la totalidad de las corridas (todas las trazas de las cantidad de rutas especificadas), se calcula el RTT promedio de cada salto. Para el caso de que un nodo haya excedido el tiempo límite(time out), tomamos la decisión de rellenar su RTT con el valor promedio de RTT del salto en que se encuentra, esto es el promedio entre el RTT de su antecesor y el RTT de su posterior; y en caso de que el antecesor o el posterior hayan tenido time out, se buscan los intervalos que no tengan time out, se hace un promedio sobre ellos y se setean al resto de los enlaces, comprendidos en ese intervalo, con ese valor obtenido. A partir de los promedios de RTT calculamos el desvío estandar y los $\Delta$RTT de cada salto calculado como diferencia con el salto anterior.
 $\Delta RTT = RTT_{i} - RTT _{i-1}$
 \\
+\\
 Una vez calculados los $\Delta RTT$ de cada salto, se utiliza scipy.stats.normalTest , la funcionalidad de SciPy que permite obtener la probabilidad de que los $\Delta RTT$ sigan una distribución normal.
+\\
+\\
+Luego pasamos a realizar el test de Grubbs, esta funci\'on fue realizada exclusivamente por nosotros. En la misma, resolvemos el t-student como one-side; y el valor alpha que, si bien la seteamos como par\'ametro, en los experimentos la seteamos en 0.05.
 
 
 

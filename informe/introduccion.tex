@@ -17,7 +17,7 @@ En este trabajo pr\'actico vamos a desarrollar una implementaci\'on propia de tr
 \end{figure}
 \vspace{0.25cm}
 
-\item TTL (time to live): No es mas que el tiempo de vida del paquete. Dentro del paquete enviado se setea dicho valor (entero) para saber cuando un paquete debe ser descartado, en caso que no llegue al destino. La forma en que funciona es, cada vez que el paquete pasa por un nodo, \'este \'ultimo le resta una unidad al valor que tenía cuando lo recibio, y lo propaga al siguiente nodo. En caso que el valor llegue a cero, el nodo descarta dicho paquete evitando que se siga propagando hasta su destino.
+\item TTL (time to live): No es mas que el tiempo de vida del paquete. Dentro del paquete enviado se setea dicho valor (entero) para saber cuando un paquete debe ser descartado, en caso que no llegue al destino. La forma en que funciona es: cada vez que el paquete pasa por un nodo, \'este \'ultimo le resta una unidad al valor que ten\'ia cuando lo recibi\'o, y lo propaga al siguiente nodo. En caso que el valor llegue a cero, el nodo descarta dicho paquete evitando que se siga propagando hasta su destino.
 
 \item ICMP y TTL: Si a un paquete se le vence su TTL ($TTL = 0$), y \'este no est\'a en el nodo correspondiente a su host destino, nos llega un mensaje ICMP de "Time Exceeded" ($11$). En caso contrario, si un paquete llego a su host destino, sin importar el valor de su TTL, entonces via ICMP nos llegar\'a un mensaje de ''Echo Replay" ($0$).
 
@@ -29,22 +29,24 @@ Una vez logrado el correcto funcionamiento del traceroute, con lo cual podremos 
 
 \begin{itemize}
 
-\item RTT promedio: Sobre un nodo tomamos su RTT promedio, esto nos sirve para estimar el tiempo veradero que tarda en llegar nuestro paquete hacia ese lugar, dado que en alguna instancia en particupal nos pudo haber dado un tiempo fuera de lo normal.
+\item RTT promedio: Es lo que tarda un enlace en contestarnos al hacerle varias corridas, tomar diferentes tiempos y promediando dicho valor. Esto nos sirve para estimar el tiempo verdadero que tarda en llegar nuestro paquete hacia ese lugar, mitigando posibles errores en instancias particulares que pudieran darnos fuera de lo normal.
 
 \item $\Delta$RTT: Es la diferencia entre el RTT promedio de un nodo con respecto a su antecesor.
 
-\item Desv\'io Estandar para cada salto: Es la raiz cuadrada de la viaranza, la cual nos dice que tan dispersos son los datos tomados.
+\item Desv\'io Estandar para cada salto: Es la raiz cuadrada de la varianza, la cual nos dice que tan dispersos son los datos tomados.
 
 \item Test de hip\'otesis: Normal test\footnote{\url{https://en.wikipedia.org/wiki/Normal_distribution}} y Grubbs test\footnote{\url{https://en.wikipedia.org/wiki/Grubbs\%27_test_for_outliers}}. Adem\'as, para detectar outliers en el Grubbs test, necesitamos saber si el valor obtenido supera un rango que se deduce mediante t-student\footnote{\url{https://en.wikipedia.org/wiki/Student\%27s_t-distribution}}.
+
+\item Outliers: Son los enlaces submarinos o significativos, los enlaces que tienen un salto relevante con respecto a su antecesor.
 
 \end{itemize}
 
 \subsection{Rutas Universitarias} 
 
-Rutas a universidades por fuera de sudam\'erica: Como la idea que nos proponen, dado el test de Grubbs, es encontrar rutas submarinas (outliers), hemos optado por elegir universidades de distintos continentes en el cual hayan océanos de distancia con respecto a nuestra IP localizada en Argentina. Las elegidas son:
+Rutas a universidades por fuera de sudam\'erica: Como la idea que nos proponen, dado el test de Grubbs, es encontrar enlaces con saltos significativos (outliers), hemos optado por elegir universidades de distintos continentes en el cual hayan oc\'eanos de distancia con respecto a nuestra IP localizada en Argentina. Estimando que ante m\'as distancias, posiblemente tengamos saltos significativamente m\'as grandes. Las elegidas son:
 
 \begin{itemize}
 \item La Universidad Rusa de la Amistad de los Pueblos (URAP)
-\item Universidad 2
-\item Universidad 3
+\item Universidad de Sydney
+\item Universidad de Hamburgo (Alemania)
 \end{itemize}
