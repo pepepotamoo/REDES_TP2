@@ -19,68 +19,90 @@ El tiempo limite indica cuanto esperar de respuesta, como m\'aximo, a un nodo.\n
 
 Captura general de los resultados obtenidos:
 
-TTL:  1    IP Source: 192.168.43.1       Argentina - Buenos Aires - Capital Federal\\
-TTL:  2    IP Source: 172.21.216.35      Argentina - Buenos Aires - Capital Federal\\
-TTL:  3    IP Source: 172.21.216.49      Argentina - Buenos Aires - Capital Federal\\
-TTL:  4    IP Source: 172.21.220.98      Argentina - Buenos Aires - Capital Federal\\
-TTL:  5    IP Source: 172.21.220.98      Argentina - Buenos Aires - Capital Federal\\
-TTL:  6    Obtuvimos time out, dado que el nodo 6 no contesto. \\
-TTL:  7    IP Source: 172.21.224.114     Argentina - Buenos Aires - Capital Federal\\
-TTL:  8    IP Source: 172.21.224.114     Argentina - Buenos Aires - Capital Federal\\
-TTL:  9    IP Source: 172.21.224.113     Argentina - Buenos Aires - Capital Federal\\
-TTL: 10    IP Source: 172.16.1.5         Argentina - Buenos Aires - Capital Federal\\
-TTL: 11    IP Source: 181.88.80.213      Argentina - Entre Rios - Federal\\
-TTL: 12    IP Source: 190.225.252.162    Argentina - Entre Rios - Federal\\
-TTL: 13    IP Source: 195.22.220.53      Argentina - Buenos Aires - Tigre\\
-TTL: 14    IP Source: 89.221.41.175      Italia\\
-TTL: 15    IP Source: 89.221.41.175      Italia \\
-TTL: 16    IP Source: 80.239.193.161     Suiza\\
-TTL: 17    IP Source: 62.115.141.125     Suiza\\
-TTL: 18    IP Source: 80.91.245.99       Suiza\\
-TTL: 19    IP Source: 213.248.64.33      Suiza \\
-TTL: 20    IP Source: 62.115.139.172     Suiza \\
-TTL: 21    IP Source: 80.91.250.96       Suiza\\
-TTL: 22    IP Source: 62.115.42.38       Suiza\\
-TTL: 23    IP Source: 194.85.40.229      Rusia - San Petersburgo\\
-TTL: 24    IP Source: 194.85.40.214      Rusia - San Petersburgo\\
-TTL: 25    IP Source: 194.190.255.42     Rusia - San Petersburgo \\
-TTL: 26    IP Source: 193.232.212.99     Rusia - Moscu\\
-TTL: 27    Obtuvimos time out, dado que el nodo 27 no contesto. \\
-TTL: 28    IP Source: 193.232.218.50     Rusia - Moscu  \newline
-
-%Promedio RTT: 0.00517716407776, 0.283120830969, 0.187513256073, 0.333625789122, 0.179352521896, 0.313862748827, 0.213618206978, 0.235024261475, 0.253823781013, 0.234326839447, 0.231229019165, 0.240871095657, 0.261270213127, 0.265528178215, 0.287424397469, 0.296373677254, 0.296877717972, 0.305123066902, 0.403781270981, 0.465127944946, 0.445419463515, 0.430629463629, 0.4652761416, 0.526445198059, 0.417342019081, 0.428152188659, 0.313862748827, 0.467977762222\newline
 \begin{figure}[h]
 	%\begin{center}
-    \includegraphics[width=0.7\textwidth]{img_analisis1/rtt_hop.png}
+    \includegraphics[width=1\textwidth]{img_analisis1/tabla.png}
      %\label{fig:ICMPlista} 
 	%\end{center} 
     
 \end{figure}
 \vspace{0.25cm}
 
-%Promedio Delta RTT: 0.00588932037354, 0.223511198044, -0.0304053096771, -0.0112577915192, 0.0367794513702, 0.107529531662, -0.120579014962, 0.0107178688049, 0.107933545113, -0.0993495464325, 0.0167979955673, -0.0487000465393, 0.064146566391, 0.0933417320251, 0.0240439891815, -0.0125254392624, 0.0359566926956, -0.0348659515381, 0.0918450593948, -4.58002090454e-05, -0.00115667533875, 0.00671604824066, 0.0508928060532, -0.0580342292786, 0.00854189395905, 0.00741848945618, -0.143095983322, 0.102489104051\newline
 \begin{figure}[h]
 	%\begin{center}
-    \includegraphics[width=0.7\textwidth]{img_analisis1/delta_rtt_hop.png}
+    \includegraphics[width=0.65\textwidth]{img_analisis1/rtt_hop.png}
      %\label{fig:ICMPlista} 
 	%\end{center} 
     
 \end{figure}
-\vspace{0.25cm}
+%\vspace{0.25cm}
 
-%Desvio Estandar Delta RTT: 0.00165442878817, 0.126023742282, 0.071172659274, 0.0745178056825, 0.1866931839, 0.180733182681, 0.0518781646894, 0.065719884364, 0.227576463877, 0.177889865429, 0.0311607993988, 0.0706603578755, 0.147728183499, 0.0762432009451, 0.0966932498659, 0.11828018604, 0.0873092181674, 0.0842616491826, 0.0484700197953, 0.112708845656, 0.0881211770851, 0.0889849976974, 0.0825379976568, 0.0601178559323, 0.0414772504639, 0.0872692906756, 0.0765956277221, 0.0546049405093\newline
 \begin{figure}[h]
 	%\begin{center}
-    \includegraphics[width=0.7\textwidth]{img_analisis1/ds_delta_rtt_hop.png}
+    \includegraphics[width=0.65\textwidth]{img_analisis1/delta_rtt_hop.png}
      %\label{fig:ICMPlista} 
 	%\end{center} 
     
 \end{figure}
-\vspace{0.25cm}
+%\vspace{0.25cm}
 
-De la muestra obtuvimos una distribuci\'on Normal, y los siguientes enlaces submarinos: nodo 2, nodo 5.\newline
+\begin{figure}[h]
+	%\begin{center}
+    \includegraphics[width=0.65\textwidth]{img_analisis1/ds_delta_rtt_hop.png}
+     %\label{fig:ICMPlista} 
+	%\end{center} 
+    
+\end{figure}
+%\vspace{0.25cm}
+
+\cleardoublepage
+
+De la muestra obtuvimos una distribuci\'on Normal, y los siguientes enlaces submarinos:
+\begin{itemize}
+\item Hop 9
+\item Hop 11
+\item Hop 16
+\end{itemize}
 
 Gr\'afico de mapa marcando puntos claves de la ruta:
 
+\subsubsection{An\'alisis de los resultados obtenidos}
+\begin{itemize}
+\item Mirando la tabla presentada se puede observar que los saltos m\'as significativos (enlaces submarinos), dado que tenemos la localizaciones de las IP. A simple vistas, estas deber\'ian situarse en los siguientes saltos:
+\begin{itemize}
+\item Del Hop 7 al Hop 8, dado que pasa de Argentina a Estados Unidos.
+\item Del Hop 12 al Hop 13, dado que pasa de Estados Unidos a Inglaterra.
+\item Del Hop 13 al Hop 15, dado que pasa de Inglaterra a Rusia.
+\end{itemize}
+\item Del gr\'afico de RTT por Hop se aprecian grandes subidas entre los siguientes saltos:
+\begin{itemize}
+\item Del Hop 8 al Hop 9.
+\item Del Hop 10 al Hop 11.
+\item Del Hop 13 al Hop 15. Cabe destacar que aca tenemos, en el Hop 14, un salto que no deja apreciar la diferencia entre el 13 y el 15. Esto se debe a nuestra forma de resolver los time out, dado que el 14 lo es.
+\item Del Hop 18, al Hop 20. En este caso ocurre exactamente igual al caso mencionado en el item anterior.
+\end{itemize}
+De la misma manera podemos notar un franco descendente entre el Hop 15 y 16.
+\item Observando el gr\'afico de $\delta$RTT por Hop podemos apreciar la tardanza, para bien o para mal, de ese enlace en particular, olvidandonos del resto de los enlaces por los que la traza pas\'o. Habiendo mencionado esto, los Hop m\'as significativos fueron los siguientes:
+\begin{itemize}
+\item Hop 9 y Hop 11. Como podemos ver, lo que tardan en responder estos enlaces es significativamente alto con respecto a los dem\'as.
+\item En menor medida tenemos los Hops 14 y 15, muy parecidos a los 19 y 20. Podemos no considerar a los Hops 14 y 19, dado que fueron productos de dos time outs y su valor no es del todo real.
+\item Tambi\'en obtuvimos un enlace, el Hop 16, que respondi\'o bastante m\'as r\'apido que los dem\'as, dado que su resultado es bastante m\'as bajo que el resto.
+\end{itemize}
+\item En este paso hablaremos del \'ultimo de los gr\'aficos, el que nos marca el desv\'io estandar de cada salto. Cabe mencionar que el desv\'io estandar nos indica que tan dispersos son los datos que nos llegaron de nuestra muestra. Como el \'analisis lo vamos a hacer sobre $\delta$RTT, vamos a obtener, sobre cada enlace, que tan alejado de la media estuvieron los datos que nos aportaron. El an\'alisis de los datos son los siguientes:
+\begin{itemize}
+\item Podemos ver que los valores vienen manteniendose constantes hasta el Hop 13, dandonos una idea de que cada enlace constenta mas o menos en un tiempo acorde. 
+\item El Hop 16 es el que presenta el desvio estandar m\'as elevado.
+\item En menor medida tenemos los Hops 15 y 20 sucede algo similiar, sin tomar en cuenta a los Hops 14 y 19.
+\item Otro que sobresale de los dem\'as es el hop 17, sin ser un valor demasiado grande.
+\end{itemize}
+\end{itemize}
+
 \subsubsection{Conclusi\'on}
-Explicaci\'on de los resultados obtenidos.
+\begin{itemize}
+\item Hop 8 y 13: Si bien estos enlaces podr\'ian haber sido marcados como un enlaces significativos, dado que pasan de Argentina a Estados Unidos y de Estados Unidos a Inglaterra, sus respuestas de paquetes ICMP fueron significativamente r\'apidas con respecto a la de sus nodos antecesores.
+\item Hop 9 y 11: Fueron indicados como un enlaces submarinos (significativos), y gran parte de eso se debe a su demora en responder mensajes ICMP. Descartamos el caso de una congesti\'on grande inst\'antanea, dado que no presentaron valores grandes en el desv\'io estandar.
+\item Hop 13: Otro enlace que podr\'ia haber sido marcado como enlace submarino, dado que pasa de Estados Unidos a Inglaterra
+\item Hop 15: Era un candidato tanto como 8 y 13, y de hecho marc\'o bastante trascendencia en los resultados analizados. No lleg\'o a quedar marcada como enlace significativo por la atenuaci\'on del time out del Hop 14.
+\item Hop 16: Marcado como enlace significativo. Lo raro de este enlace es que super\'o el tests de grubbs debido a que tarde significativamente que su antecesor. Viendo los resultados, se puede concluir que el Hop 16 responde por momento muy r\'apido aunque no es constante, por su alto valor en el desv\'io estandar. Con esto \'ulimo suponemos que responde r\'apidos los paquetes ICMP cuando no esta muy sobrecargado de paquetes.
+\item Hop 20: Este enlace, de no haber sido por el time out del Hop 19, podr\'ia haber sido considerado como un enlace significativo. No tiene mucho sentido dado que su enlace antecesor est\'a en Mosc\'u junto a \'el. Pero si miramos los resultados obtenido, vemos que este enlace es bastante inestable con respecto a su antecesor y responde de forma m\'as lenta (lo contrario al Hop 16), lo que origina su relevancia en el an\'alisis.
+\end{itemize}
