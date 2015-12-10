@@ -22,6 +22,7 @@ Ejemplo de corrida:
 \\
 \\
 
+El algoritmo de Traceroute utilizado es el mencionado en las slides de la clase, en la hoja 19 - traceroute sobre ICMP.\\
 En cada corrida, para trazar una ruta, se almacena la IP y el RTT de los nodos intermedios mediante el incremento de TTL, empezando por el valor 1 hasta llegar al host destino o hasta alcanzar al TTL máximo indicado por el parámetro de entrada. Como nos indicaban que deb\'iamos hacer una especie de monitoreo, cada corrida se va mostrando por pantalla en la salida.\\
 Tambi\'en tenemos Cantida de rutas, y la forma de mostrarla por pantalla es la siguiente: Cuando finaliza una ruta, llega a su host destino o al TTL m\'aximo, se resetea la pantalla y arranca la ruta como lo hizo inicialmente la primera. Este comportamiento se repite hasta finalizar la \'ultima ruta.
 \\
