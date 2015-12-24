@@ -1,7 +1,9 @@
 \section{An\'alisis 1: La Universidad Rusa de la Amistad de los Pueblos (URAP)}
 Vamos a realizar un an\'alisis de nuestro traceroute sobre "La Universidad Rusa de la Amistad de los Pueblos (URAP)". Es una universidad que se encuentra en Rusia, en la ciudad de Mosc\'u.\newline
 
-El host de dicha universidad es http://www.rudn.ru/ (IP: 193.232.218.50).\\	
+El host de dicha universidad es: \url{http://www.rudn.ru/} (IP: 193.232.218.50).\\
+	
+Página web de geolocalización de IP utilizada: \url{http://www.geoiptool.com/es/}.
 
 \subsection{Par\'ametros de entrada}
 \begin{itemize}
@@ -45,15 +47,7 @@ De la muestra obtuvimos una distribuci\'on Normal, y los siguientes enlaces sign
 \end{figure}
 \vspace{0.25cm}
 
-
-\subsection{An\'alisis de la captura obtenida}
-
-Mirando la tabla presentada uno podr\'ia estimar que los saltos m\'as significativos (enlaces submarinos) estar\'an dados por aquellos que tengan una distancia bastante grande con respecto a su enlace anterior. A simple vistas, estas deber\'ian situarse en los siguientes saltos, dado que pasan de un continente a otro:
-\begin{itemize}
-\item Del Hop 7 al Hop 8, dado que pasa de Argentina a Estados Unidos.
-\item Del Hop 12 al Hop 13, dado que pasa de Estados Unidos a Inglaterra.
-\item Del Hop 13 al Hop 15, dado que pasa de Inglaterra a Rusia.
-\end{itemize}
+\subsection{Gr\'aficos de la captura obtenida}
 
 \begin{figure}[h]
 	%\begin{center}
@@ -64,15 +58,6 @@ Mirando la tabla presentada uno podr\'ia estimar que los saltos m\'as significat
 \end{figure}
 \vspace{0.25cm}
 
-Del gr\'afico se aprecian grandes subidas entre los siguientes saltos:
-\begin{itemize}
-\item Del Hop 8 al Hop 9.
-\item Del Hop 10 al Hop 11.
-\item Del Hop 13 al Hop 15. Cabe mencionar que esta diferencia es atenuada por nuestra forma de resolver el time out (interpolando entre el 13 y el 15) del Hop 14.
-\item Del Hop 18 al Hop 20. Se vuelve a presentar el mismo caso que el item anterior.
-\end{itemize}
-De la misma manera podemos notar un franco descendente entre el Hop 15 y 16.
-
 \begin{figure}[h]
 	%\begin{center}
     \includegraphics[width=0.65\textwidth]{img_analisis1/delta_rtt_hop.png}
@@ -81,12 +66,6 @@ De la misma manera podemos notar un franco descendente entre el Hop 15 y 16.
     
 \end{figure}
 \vspace{0.25cm}
-Observando el gr\'afico podemos apreciar la tardanza, para bien o para mal, de ese enlace en particular, olvidandonos del resto de los enlaces por los que la traza pas\'o. Habiendo mencionado esto, los Hop m\'as significativos fueron los siguientes:
-\begin{itemize}
-\item Hop 9 y Hop 11. Como podemos ver, lo que tardan en responder estos enlaces es significativamente alto con respecto a los dem\'as.
-\item En menor medida tenemos los Hops 14 y 15, muy parecidos a los 19 y 20. Podemos no considerar a los Hops 14 y 19, dado que fueron productos de dos time outs y su valor no es del todo real.
-\item Tambi\'en obtuvimos un enlace, el Hop 16, que respondi\'o bastante m\'as r\'apido que los dem\'as, dado que su resultado es bastante m\'as bajo que el resto.
-\end{itemize}
 
 \begin{figure}[h]
 	%\begin{center}
@@ -97,26 +76,95 @@ Observando el gr\'afico podemos apreciar la tardanza, para bien o para mal, de e
 \end{figure}
 \vspace{0.25cm}
 
-En este paso hablaremos del \'ultimo de los gr\'aficos. Cabe mencionar que el desv\'io estandar nos indica que tan dispersos son los datos que nos llegaron de nuestra muestra. Como el \'analisis lo vamos a hacer sobre $\Delta$RTT, vamos a obtener, sobre cada enlace, que tan alejado de la media estuvieron los datos que nos aportaron. El an\'alisis de los datos son los siguientes:
-\begin{itemize}
-\item Podemos ver que los valores vienen manteniendose constantes hasta el Hop 13, dandonos una idea de que cada enlace constenta mas o menos en un tiempo acorde. 
-\item El Hop 16 es el que presenta el desvio estandar m\'as elevado.
-\item En menor medida tenemos los Hops 15 y 20 sucede algo similiar, sin tomar en cuenta a los Hops 14 y 19.
-\item Otro que sobresale de los dem\'as es el hop 17, sin ser un valor demasiado grande.
-\end{itemize}
+\newpage
+
+\subsection{An\'alisis de la captura}
+Si nos detenmos a observar el gráficos RTT por Hop, sobresalen notablemente los hops 9 y 11, ya que tienen un gran aumento de tiempo en comparación con sus hops antecesores. En menor medida tenemos a los hops 14, 15, 16, 18 y 19.\newline
+
+Si observamos el gráfico $\Delta$RTT por Hop, notamos picos muy pronunciados en los hops 9, 11 y 16. Hay considerar que los hops 9 y 11 son distinguidos por picos ascendentes, y 16 por tener un pico descendente (nos sorprendio este resultado atípico). Notemos que los hops distinguidos en este gráficos son exactamente los detectados por el test de grubbs.\newline
+
+El tercer gráficos, el de desvio estandar, nos muestra que tan variados fueron los tiempos que no fueron llegando en cada salto. Como se puede apreciar, del Hop 14 en adelante, los tiempos que nos fueron llegando fueron bastantes cambiantes, logrando su pico máximo en el Hop 16, lo que produce que estos tiempos no sean demasiados confiables en el promedio.\newline
+
+Observando la geolocalización, notamos que se produce un salto muy grande del Hop 7 al Hop 8, dado que pasa de Argentina a Estados Unidos; y aunque no pase de un continente a otro, la distancia física son bastante grandes. Sin embargo, notamos que sus tiempos son muy parecidos a los tiempos que tardó en los saltos anteriores donde su IP se situaba en Argentina, por lo que concluimos que esta IP está situada en Argentina y que pudo haber fallado nuestro geolocalizador. El siguiente salto, el Hop 9, que fue detectado como outlier, nuestro geolocalizador lo ubicó también en Estados Unidos; en este salto sí concluimos que se ubica en Estados Unidos, dado el gran aumento del tiempo que se origina con respecto al salto anterior, y que se visualiza tanto en el primer gráfico como en el segundo.\newline
+
+Otro salto que desde nuestro geolocalizador notamos importante fue del Hop 12 al 13, donde pasa de Estados Unidos a Inglaterra. Sin embargo, vuelve a ocurrir lo mismo que notamos anteriormente, no notamos una gran diferencia de tiempos entre ellos dos, lo cual no tiene mucho sentido dado que está pasando de un continente a otro. Sí se da un cambio significativo entre el salto del Hop 10 al 11, por lo que concluimos que en este salto pasa de Estados Unidos a Inglaterra, siendo el Hop 11 una IP correspondiente de Inglaterra y el Hop 10 una IP correspondiente a Estados Unidos. Por consiguiente, la IP del Hop 12, también pertenecerá a Inglaterra.\newline
+
+Otro salto importante que se puede notar de nuestro geolocalizador, es de Inglaterra a Rusia. Esto sucede del Hop 13 al 15, porque el Hop 14 nos da un time out. Es importante analizar el time out, dado que nosotros resolvimos este problema interpolando los tiempos del anterior con el siguiente (en este caso, 13 y 15) y sacando un promedio de ambos, estos nos amortiguan cualquier tipo de crecimiento grande que pueda detectar nuestro test de grubbs. Si observamos el primer gráfico, el del RTT promedio, y omitimos el Hop 14, podemos notar un crecimiento importante; aunque en saltos posteriores los tiempos se amortiguan y arrojan tiempos parecidos (pero no más chicos) que los otorgados en inglaterra. Concluimos que los saltos del Hop 15 en adelante se sitúan en Rusia, dado que los tiempos del RTT promedio rondan por encima de los $0.3$, mientras que en Inglaterra rondaban tiempos menores a este.\newline
+
+Nos resta analizar el Hop 16, que nuestro test de grubbs lo ha detectado como outlier, siendo que esta IP vive en Rusia y cerca de esta no se registra algun evento importante en la geolocalización. Esta detección se debe a un decremento y no a un aumento significativo del tiempo; además el gráfico del desvío estándar marcó un valor elevado sobre este Hop, indicando un gran varianza de los valores obtenidos sobre este salto. Concluimos entonces, que este outlier se debe a características de este Hop en particular, congestiones de router, retardo de respuesta en su antecesor, o incluso errores de algún tipo que se pudieron haber dado en la muestra recogida.
+
+
+%\subsection{An\'alisis de la captura obtenida}
+
+%Mirando la tabla presentada uno podr\'ia estimar que los saltos m\'as significativos (enlaces submarinos) estar\'an dados por aquellos que tengan una distancia bastante grande con respecto a su enlace anterior. A simple vistas, estas deber\'ian situarse en los siguientes saltos, dado que pasan de un continente a otro:
+%\begin{itemize}
+%\item Del Hop 7 al Hop 8, dado que pasa de Argentina a Estados Unidos.
+%\item Del Hop 12 al Hop 13, dado que pasa de Estados Unidos a Inglaterra.
+%\item Del Hop 13 al Hop 15, dado que pasa de Inglaterra a Rusia.
+%\end{itemize}
+
+%\begin{figure}[h]
+	%\begin{center}
+    %\includegraphics[width=0.65\textwidth]{img_analisis1/rtt_hop.png}
+     %\label{fig:ICMPlista} 
+	%\end{center} 
+    
+%\end{figure}
+%\vspace{0.25cm}
+
+%Del gr\'afico se aprecian grandes subidas entre los siguientes saltos:
+%\begin{itemize}
+%\item Del Hop 8 al Hop 9.
+%\item Del Hop 10 al Hop 11.
+%\item Del Hop 13 al Hop 15. Cabe mencionar que esta diferencia es atenuada por nuestra forma de resolver el time out (interpolando entre el 13 y el 15) del Hop 14.
+%\item Del Hop 18 al Hop 20. Se vuelve a presentar el mismo caso que el item anterior.
+%\end{itemize}
+%De la misma manera podemos notar un franco descendente entre el Hop 15 y 16.
+
+%\begin{figure}[h]
+	%\begin{center}
+    %\includegraphics[width=0.65\textwidth]{img_analisis1/delta_rtt_hop.png}
+     %\label{fig:ICMPlista} 
+	%\end{center} 
+    
+%\end{figure}
+%\vspace{0.25cm}
+%Observando el gr\'afico podemos apreciar la tardanza, para bien o para mal, de ese enlace en particular, olvidandonos del resto de los enlaces por los que la traza pas\'o. Habiendo mencionado esto, los Hop m\'as significativos fueron los siguientes:
+%\begin{itemize}
+%\item Hop 9 y Hop 11. Como podemos ver, lo que tardan en responder estos enlaces es significativamente alto con respecto a los dem\'as.
+%\item En menor medida tenemos los Hops 14 y 15, muy parecidos a los 19 y 20. Podemos no considerar a los Hops 14 y 19, dado que fueron productos de dos time outs y su valor no es del todo real.
+%\item Tambi\'en obtuvimos un enlace, el Hop 16, que respondi\'o bastante m\'as r\'apido que los dem\'as, dado que su resultado es bastante m\'as bajo que el resto.
+%\end{itemize}
+
+%\begin{figure}[h]
+	%\begin{center}
+    %\includegraphics[width=0.65\textwidth]{img_analisis1/ds_delta_rtt_hop.png}
+     %\label{fig:ICMPlista} 
+	%\end{center} 
+    
+%\end{figure}
+%\vspace{0.25cm}
+
+%En este paso hablaremos del \'ultimo de los gr\'aficos. Cabe mencionar que el desv\'io estandar nos indica que tan dispersos son los datos que nos llegaron de nuestra muestra. Como el \'analisis lo vamos a hacer sobre $\Delta$RTT, vamos a obtener, sobre cada enlace, que tan alejado de la media estuvieron los datos que nos aportaron. El an\'alisis de los datos son los siguientes:
+%\begin{itemize}
+%\item Podemos ver que los valores vienen manteniendose constantes hasta el Hop 13, dandonos una idea de que cada enlace constenta mas o menos en un tiempo acorde. 
+%\item El Hop 16 es el que presenta el desvio estandar m\'as elevado.
+%\item En menor medida tenemos los Hops 15 y 20 sucede algo similiar, sin tomar en cuenta a los Hops 14 y 19.
+%\item Otro que sobresale de los dem\'as es el hop 17, sin ser un valor demasiado grande.
+%\end{itemize}
 
 %\cleardoublepage
 
 
-\subsection{An\'alisis de los enlaces m\'as relevantes}
-\begin{itemize}
-\item Hop 8 y 13: Si bien era esperable que estos enlaces fueran marcados como un enlaces significativos, dado que pasan de Argentina a Estados Unidos y de Estados Unidos a Inglaterra, sus respuestas de paquetes ICMP fueron significativamente r\'apidas con respecto a la de sus nodos antecesores.
-\item Hop 9 y 11: Fueron indicados como un enlaces submarinos (significativos), y gran parte de eso se debe a su demora en responder mensajes ICMP. Descartamos el caso de una congesti\'on grande inst\'antanea, dado que no presentaron valores grandes en el desv\'io estandar.
-\item Hop 13: Otro enlace que estimamos que podr\'ia haber sido marcado como enlace significativo, dado que pasa de Estados Unidos a Inglaterra. Sin embargo, esto fue atenuado porque sus antecesores respond\'ian considerablemente m\'as lento.
-\item Hop 15: Era un candidato tanto como 8 y 13, y de hecho marc\'o bastante trascendencia en los resultados analizados. No lleg\'o a quedar marcada como enlace significativo por la atenuaci\'on del time out del Hop 14.
-\item Hop 16: Marcado como enlace significativo. Lo raro de este enlace es que super\'o el tests de grubbs debido a que su respuesta fue mucho m\'as r\'apida que su antecesor, como se puede apreciar en el gr\'afico $\Delta$RTT. Viendo los resultados del gr\'afico correspondiente al desv\'io estandar, se puede observar que los resultados fueron muy dispersos por lo que podemos asumir que responde muy r\'apido en algunos momentos particulares, o que quiz\'as algunos tiempos se calcularon erroneamente. Otra de las cosas que pudimos asumir, es que quizas, en algunos momentos, dicho enlace estaba completamente descongestionado, con lo cual respond\'ia los paquetes mucho m\'as r\'apido su antecesor. 
-\item Hop 20: Este enlace, de no haber sido por el time out del Hop 19, podr\'ia haber sido considerado como un enlace significativo. No tiene mucho sentido dado que su enlace antecesor est\'a en Mosc\'u junto a \'el. Pero si miramos los resultados obtenido, vemos que este enlace es bastante inestable con respecto a su antecesor y responde de forma m\'as lenta (lo contrario al Hop 16), lo que origina su relevancia en el an\'alisis.
-\end{itemize}
+%\subsection{An\'alisis de los enlaces m\'as relevantes}
+%\begin{itemize}
+%\item Hop 8 y 13: Si bien era esperable que estos enlaces fueran marcados como un enlaces significativos, dado que pasan de Argentina a Estados Unidos y de Estados Unidos a Inglaterra, sus respuestas de paquetes ICMP fueron significativamente r\'apidas con respecto a la de sus nodos antecesores.
+%\item Hop 9 y 11: Fueron indicados como un enlaces submarinos (significativos), y gran parte de eso se debe a su demora en responder mensajes ICMP. Descartamos el caso de una congesti\'on grande inst\'antanea, dado que no presentaron valores grandes en el desv\'io estandar.
+%\item Hop 13: Otro enlace que estimamos que podr\'ia haber sido marcado como enlace significativo, dado que pasa de Estados Unidos a Inglaterra. Sin embargo, esto fue atenuado porque sus antecesores respond\'ian considerablemente m\'as lento.
+%\item Hop 15: Era un candidato tanto como 8 y 13, y de hecho marc\'o bastante trascendencia en los resultados analizados. No lleg\'o a quedar marcada como enlace significativo por la atenuaci\'on del time out del Hop 14.
+%\item Hop 16: Marcado como enlace significativo. Lo raro de este enlace es que super\'o el tests de grubbs debido a que su respuesta fue mucho m\'as r\'apida que su antecesor, como se puede apreciar en el gr\'afico $\Delta$RTT. Viendo los resultados del gr\'afico correspondiente al desv\'io estandar, se puede observar que los resultados fueron muy dispersos por lo que podemos asumir que responde muy r\'apido en algunos momentos particulares, o que quiz\'as algunos tiempos se calcularon erroneamente. Otra de las cosas que pudimos asumir, es que quizas, en algunos momentos, dicho enlace estaba completamente descongestionado, con lo cual respond\'ia los paquetes mucho m\'as r\'apido su antecesor. 
+%\item Hop 20: Este enlace, de no haber sido por el time out del Hop 19, podr\'ia haber sido considerado como un enlace significativo. No tiene mucho sentido dado que su enlace antecesor est\'a en Mosc\'u junto a \'el. Pero si miramos los resultados obtenido, vemos que este enlace es bastante inestable con respecto a su antecesor y responde de forma m\'as lenta (lo contrario al Hop 16), lo que origina su relevancia en el an\'alisis.
+%\end{itemize}
 
-\subsection{Conclusi\'on}
-Al iniciar la investigaci\'on, uno estima que los resultados de los enlaces m\'as relevantes, con m\'as demoras o menos demoras, estar\'an dados por aquellos con mayor o menor distancias f\'isica; principalmente cuando se tienen que comunicar de un continente a otro con respecto a comunicaciones del mismo pa\'is. Sin embargo, en este \'analisis, se observa que ese no es el \'unico par\'ametro significativo. Si bien a medida que la distancia entre enlaces se agranda, el tiempo generalmente aumenta, se pudo observar que los tiempos de cada enlace se deben tambi\'en en gran parte a como est\'en configurados, el tr\'afico de datos que tenga en ese momento (congesti\'on), la velocidad con la que contestan a dicha petici\'on, la manera que resolvemos cuando hay enlaces que no contestan, etc.
+%\subsection{Conclusi\'on}
+%Al iniciar la investigaci\'on, uno estima que los resultados de los enlaces m\'as relevantes, con m\'as demoras o menos demoras, estar\'an dados por aquellos con mayor o menor distancias f\'isica; principalmente cuando se tienen que comunicar de un continente a otro con respecto a comunicaciones del mismo pa\'is. Sin embargo, en este \'analisis, se observa que ese no es el \'unico par\'ametro significativo. Si bien a medida que la distancia entre enlaces se agranda, el tiempo generalmente aumenta, se pudo observar que los tiempos de cada enlace se deben tambi\'en en gran parte a como est\'en configurados, el tr\'afico de datos que tenga en ese momento (congesti\'on), la velocidad con la que contestan a dicha petici\'on, la manera que resolvemos cuando hay enlaces que no contestan, etc.
