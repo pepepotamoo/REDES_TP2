@@ -3,6 +3,10 @@ Vamos a realizar un an\'alisis de nuestro traceroute sobre la universidad de la 
 
 El host de dicha universidad es http://sydney.edu.au/ (IP: 129.78.5.8).\\	
 
+Página web de geolocalización de IP utilizada: \url{http://www.geoiptool.com/es/}.\\
+
+Proveedor de Internet: Fibertel.
+
 \subsubsection{Par\'ametros de entrada}
 \begin{itemize}
 \item Host: sydney.edu.au
@@ -20,7 +24,7 @@ Captura general de los resultados obtenidos: \newline
 
 \begin{figure}[h]
 	\begin{center}
-    \includegraphics[width=1\textwidth]{img_analisis3/captura.png} 
+    \includegraphics[width=1\textwidth]{img_analisis2/tabla.png} 
 	\end{center} 
 \end{figure}
 %TTL:  1    IP Source: 190.192.134.1    Argentina - Buenos Aires - Capital Federal\\ 
@@ -49,7 +53,9 @@ Captura general de los resultados obtenidos: \newline
 %TTL: 24    IP Source: 129.78.5.8       Australia - Sydney\newline
 
 
-De la muestra obtuvimos una distribuci\'on Normal, y los siguientes enlaces submarinos seg\'un el test de Grubbs: al pasar al nodo 9 y al pasar al nodo 16.\newline
+De la muestra obtuvimos una distribuci\'on Normal, y los siguientes enlaces submarinos seg\'un el test de Grubbs: al pasar al nodo 9 y al pasar al nodo 16.
+
+\newpage
 
 \subsubsection{An\'alisis de los resultados}
 Mediante gr\'aficos haremos un an\'alisis de los resultados obtenidos. \newline
@@ -57,21 +63,17 @@ Mediante gr\'aficos haremos un an\'alisis de los resultados obtenidos. \newline
 
 \begin{figure}[h]
 	\begin{center}
-    \includegraphics[width=0.7\textwidth]{img_analisis2/RTTprom.png} 
+    \includegraphics[width=0.5\textwidth]{img_analisis2/RTTprom.png} 
 	\caption{Figura 1: Rtt promedio - Universidad de Sydney}	
 	\end{center} 
-	
-    
 \end{figure}
-
-
+\vspace{0.25cm}
 
 \begin{figure}[h]
 	\begin{center}
-    \includegraphics[width=0.7\textwidth]{img_analisis2/Delta_RTT.png}
+    \includegraphics[width=0.5\textwidth]{img_analisis2/Delta_RTT.png}
      \caption{Figura 2: Delta RTT - Universidad de Sydney} 
 	\end{center} 
-    
 \end{figure}
 \vspace{0.25cm}
 
@@ -85,5 +87,7 @@ Con respecto al segundo outlier podemos decir que en esta ocaci\'on si se cumple
 
 Finalmente presentamos un mapa global donde vamos a trazar los puntos importantes de la ruta que realizan los paquetes. 
 
-
-
+\begin{figure}[h]
+    \includegraphics[width=0.7\textwidth]{img_analisis2/mapa-analisis2.jpg}
+\end{figure}
+\vspace{0.25cm}

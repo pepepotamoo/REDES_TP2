@@ -21,6 +21,8 @@ En este trabajo pr\'actico vamos a desarrollar una implementaci\'on propia de tr
 
 \item ICMP y TTL: Si a un paquete se le vence su TTL ($TTL = 0$), y \'este no est\'a en el nodo correspondiente a su host destino, nos llega un mensaje ICMP de "Time Exceeded" ($11$). En caso contrario, si un paquete llego a su host destino, sin importar el valor de su TTL, entonces via ICMP nos llegar\'a un mensaje de ''Echo Replay" ($0$).
 
+\item Time out: Estos time out son generados por un router que no es el destinatario del paquete, al que le llego un paquete y su ttl llegó a $0$, pero no nos respondió con un mensaje time exceeded indicandonos este suceso. En estos casos no tendremos un RTT correspondiente a ese nodo, y deberemos buscar la manera de resolverlo para poder realizar la experimentación de la mejor manera.
+
 \item RTT (Round-Trip delay Time): Es el tiempo que tarda un paquete de datos enviado desde un emisor en volver a este mismo, habiendo pasado por el receptor de destino. Es uno de los datos que nos muestra por pantalla las implementaciones hechas actualmente de traceroute. Con este valor podremos saber cuanto tardan los paquetes en llegar a cada nodo que intervienen en el recorrido hacia el host destino.
 
 \end{itemize}
